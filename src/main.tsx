@@ -1,12 +1,17 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
-import './index.css'
+import './index.scss'
+
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <React.StrictMode>
+        <App/>
+    </React.StrictMode>,
 )
 
-postMessage({ payload: 'removeLoading' }, '*')
+import {ipcRenderer} from "electron"
+
+ipcRenderer.on('open-dir', (_e, s: string) => {
+    console.log('open-dir', s);
+})
