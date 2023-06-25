@@ -7,13 +7,21 @@ export default () => {
   let [list, setList] = useState([]);
 
   return <div className={'main-container'}>
-    <Tabs id={'BinTabs'} vertical={true}>
-      {binService.binList.map(e =>
-        <Tab id={'BinTabs-' + e} title={e} panel={
-          <div></div>
-        }></Tab>
-      )}
-      <Tabs.Expander/>
-    </Tabs>
+    <div className={'bin-list'}>
+      <Tabs id={'BinTabs'} vertical={true} fill={true}>
+        {binService.binList.map(e =>
+          <Tab id={'BinTabs-' + e} title={e} key={e}></Tab>
+        )}
+      </Tabs>
+    </div>
+    <div className={'img-list'}>
+      我是列表
+    </div>
+    <div className={'img-viewer'}>
+      <div>
+        图档信息：
+      </div>
+      <canvas className={'viewer-canvas'}></canvas>
+    </div>
   </div>
 }

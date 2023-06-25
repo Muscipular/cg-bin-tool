@@ -3,9 +3,11 @@ import {Button, Classes, FormGroup, InputGroup, Label} from "@blueprintjs/core";
 import {observer,} from 'mobx-react-lite';
 import config from '../config'
 import {ipcRenderer} from "electron";
+import binService from "../BinService.ts";
 
 ipcRenderer.on('open-dir', (e, {path, error}: { path: string, error: any }) => {
   config.path = path;
+  binService.loadBin(path);
 })
 
 function Settings() {

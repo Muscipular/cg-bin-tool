@@ -17,7 +17,7 @@
   flex: 1;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .none-selection {
@@ -29,4 +29,38 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.bin-list {
+  height: 100%;
+  flex: none;
+  width: auto;
+  overflow-y: auto;
+}
+
+.bin-list::-webkit-scrollbar {
+  width: 4px;
+  height: 0;
+  background: rgba(148, 165, 189, 0.4);
+}
+
+.bin-list::-webkit-scrollbar-thumb {
+  width: 1px;
+  background: rgba(33, 93, 176, 0.5);
+}
+
+.img-list {
+  width: 200px;
+  background: bisque;
+}
+
+.img-viewer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer-canvas {
+  background: gray;
+  flex: 1;
 }
