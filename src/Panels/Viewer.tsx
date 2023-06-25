@@ -10,7 +10,7 @@ export default () => {
     <div className={'bin-list'}>
       <Tabs id={'BinTabs'} vertical={true} fill={true}>
         {binService.binList.map(e =>
-          <Tab id={'BinTabs-' + e} title={e} key={e}></Tab>
+          <Tab id={'BinTabs-' + e.name} title={e.name} key={e.name}></Tab>
         )}
       </Tabs>
     </div>

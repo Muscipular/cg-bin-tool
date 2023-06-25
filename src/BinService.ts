@@ -4,6 +4,7 @@ import {ReadStream} from "fs";
 import {glob} from "glob";
 import {FileHandle} from "fs/promises";
 import * as Path from 'path';
+import BinReader from "./utils/BinReader.ts";
 
 class CGGraphicInfo {
   /*LONG	序號;	圖片的編號
@@ -34,9 +35,12 @@ LONG	地圖編號;	低16位表示在地圖文件裡的編號，高16位可能表
 //   public Padding2: number = 0;
   public MapNo: number = 0;
 
-  public static async read(r: AsyncBinaryStream) {
+  public static async read(r: BinReader) {
+    if (r.eof || r.size - r.position < 40) {
+      return null;
+    }
     // r.read({length: 40})
-    var info = new CGGraphicInfo();
+    let info = new CGGraphicInfo();
 
     info.SeqNo = await r.readInt32LE();
     info.Offset = await r.readUInt32LE();
@@ -45,11 +49,11 @@ LONG	地圖編號;	低16位表示在地圖文件裡的編號，高16位可能表
     info.OffsetY = await r.readInt32LE();
     info.Width = await r.readInt32LE();
     info.Height = await r.readInt32LE();
-    info.SizeX = await r.readUInt8();
-    info.SizeY = await r.readUInt8();
-    info.Flag = await r.readUInt8();
+    info.SizeX = await r.readUint8();
+    info.SizeY = await r.readUint8();
+    info.Flag = await r.readUint8();
     await r.readUInt32LE();
-    await r.readUInt8();
+    await r.readUint8();
     info.MapNo = await r.readInt32LE();
     return info;
   }
@@ -94,10 +98,10 @@ class BinService {
 
   async loadBin(path: string) {
     // let files = await fs.promises.readdir(path);
-    let files = await glob("bin/**/GraphicInfo*.bin", {cwd: path, root: path, absolute: false, nodir: true})
+    let files = await glob("bin/**/GraphicInfo*.bin", { cwd: path, root: path, absolute: false, nodir: true })
     let ret: GraphicData[] = [];
     for (const file of files) {
-      ret.push({name: file.replace(/GraphicInfo/i, "Graphic"), infoList: await this.loadInfo(Path.join(path, file))});
+      ret.push({ name: file.replace(/GraphicInfo/i, "Graphic"), infoList: await this.loadInfo(Path.join(path, file)) });
     }
     // console.log(files);
     runInAction(() => {
@@ -108,8 +112,7 @@ class BinService {
   async loadInfo(path: string) {
     console.log('load Info ' + path);
     let fd = await fs.promises.open(path, 'r');
-    let stream = fd.createReadStream();
-    let binaryStream = new AsyncBinaryStream(stream);
+    let binaryStream = new BinReader(fd);
     let info: CGGraphicInfo | null = null;
     let ret: CGGraphicInfo[] = [];
     try {
@@ -120,7 +123,6 @@ class BinService {
     } catch (e) {
       console.error('load info error', e);
     }
-    stream.close();
     await fd.close();
     return ret;
   }
