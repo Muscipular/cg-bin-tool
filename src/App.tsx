@@ -1,33 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/electron-vite.animate.svg'
+import {useState} from 'react'
 import './App.scss'
 
+import {Alignment, Button, Icon, Navbar, Tab, Tabs} from "@blueprintjs/core";
+import Viewer from "./Panels/Viewer.tsx";
+import Tools from "./Panels/Tools.tsx";
+import Settings from "./Panels/Settings.tsx";
+import "normalize.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+
 function App() {
-  const [count, setCount] = useState(0)
+  let [tabId, setTabId] = useState('viewer');
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Navbar className={'navi-bar draggable'}>
+        <Navbar.Group align={Alignment.LEFT}>
+          <Navbar.Heading>CG-BIN-TOOL</Navbar.Heading>
+          <Navbar.Divider/>
+          <Tabs id="MainTabs" animate={true} selectedTabId={tabId} className={"MainTabs"} onChange={e => setTabId(e + '')}>
+            <Tab id="viewer" icon={"home"} title="列表"/>
+            <Tab id="tools" icon={"cube"} title="工具"/>
+            <Tab id="settings" icon={"settings"} title="设置"/>
+          </Tabs>
+        </Navbar.Group>
+        <Navbar.Group align={Alignment.RIGHT}>
+          <input className="bp5-input" type="text" placeholder="Search..."/>
+        </Navbar.Group>
+      </Navbar>
+      {tabId == 'viewer' && <Viewer/>}
+      {tabId == 'tools' && <Tools/>}
+      {tabId == 'settings' && <Settings/>}
     </>
   )
 }

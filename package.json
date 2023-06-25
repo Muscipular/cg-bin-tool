@@ -9,8 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@blueprintjs/core": "^5.0.0",
+    "@blueprintjs/icons": "^5.0.0",
+    "mobx": "^6.9.0",
+    "mobx-react-lite": "^3.4.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-virtual": "^2.10.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
