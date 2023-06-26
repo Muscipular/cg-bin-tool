@@ -71,7 +71,7 @@ export class CGPUtils {
     ]
     for (let i = 0; i < 16; i++) {
       for (let j = 0; j < 3; j++) {
-        ret.writeUint8(p1[i][j], i * 4 + j);
+        ret.writeUint8(p1[i][j], i * 4 + (2 - j));
       }
       if (i > 0) {
         ret.writeUint8(0xff, i * 4 + 3);
@@ -79,17 +79,32 @@ export class CGPUtils {
     }
     for (let i = 0; i < 240 - 16; i++) {
       for (let j = 0; j < 3; j++) {
-        ret.writeUint8(buffer.readUInt8(i * 3 + j), (i + 16) * 4 + j);
+        ret.writeUint8(buffer.readUInt8(i * 3 + j), (i + 16) * 4 + (2 - j));
       }
       ret.writeUint8(0xff, (i + 16) * 4 + 3);
     }
     for (let i = 0; i < 16; i++) {
       for (let j = 0; j < 3; j++) {
-        ret.writeUint8(p2[i][j], 240 + i * 4 + j);
+        ret.writeUint8(p2[i][j], 240 * 4 + i * 4 + (2 - j));
       }
       if (i > 0) {
-        ret.writeUint8(0xff, 240 + i * 4 + 3);
+        ret.writeUint8(0xff, 240 * 4 + i * 4 + 3);
       }
+    }
+    return ret;
+  }
+
+  static convert(buffer: Buffer, base: Buffer) {
+    let ret = Buffer.alloc(1024, 0);
+    base.copy(ret);
+    for (let i = 0; i < 256; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (i * 3 + j >= buffer.length) {
+          return ret;
+        }
+        ret.writeUint8(buffer.readUInt8(i * 3 + j), (i) * 4 + (j));
+      }
+      ret.writeUint8(0xff, (i) * 4 + 3);
     }
     return ret;
   }

@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Tab, Tabs} from "@blueprintjs/core";
+import {HTMLSelect, Tab, Tabs} from "@blueprintjs/core";
 import binService from "../Service/BinService.ts";
 import GraphicsList from "./GraphicsList.tsx";
 import {observer} from "mobx-react-lite";
@@ -11,6 +11,7 @@ let Viewer = () => {
   // let [list, setList] = useState([]);
   let [currentBin, setCurrentBin] = useState(binService.binList[0]);
   let [g, setG] = useState<CGGraphicInfo | null>(null);
+  let [cgp, setCGP] = useState<string | null>(null);
 
   return <div className={'main-container'}>
     <div className={'bin-list'}>
@@ -28,8 +29,11 @@ let Viewer = () => {
         占位: {g?.SizeX}X{g?.SizeY} 宽高: {g?.Width}x{g?.Height} 偏移:{g?.OffsetX}x{g?.OffsetY}
       </div>
       <div> 标记: {g?.Flag} 大小:{g?.Length}@{g?.Offset}
+        <HTMLSelect value={cgp!} options={binService.cgpList} onChange={(e) => {
+          setCGP(e.currentTarget.value);
+        }}></HTMLSelect>
       </div>
-      {currentBin && g && <ViewerRender bin={currentBin} info={g}/>}
+      {currentBin && g && cgp && <ViewerRender bin={currentBin} info={g} cgp={cgp}/>}
     </div>
   </div>
 };

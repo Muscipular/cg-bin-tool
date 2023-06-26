@@ -9,11 +9,20 @@ export function decode(buf: Buffer) {
   let w = buf.readInt32LE(4);
   let h = buf.readInt32LE(8);
   let size = buf.readInt32LE(12);
-  if (!(ver & 0x1)) {
-    return buf.subarray(16, 16 + size);
+  let palSize = 0;
+  let pOffset = 0;
+  if (ver >= 3) {
+    palSize = buf.readInt32LE(16);
+    pOffset += 4;
+  }
+  let fBuff = buf;
+  buf = buf.subarray(16 + pOffset);
+  if ((ver & 0x1) === 0) {
+    console.log('not compress', ver, size, w, h, w * h);
+    return { ver, pal: palSize > 0 ? buf.subarray(size) : null, size, buffer: buf };
   }
   let stream = new BufferedStream({ initialSize: w * h });
-  for (let i = 16; i < buf.length && i < size + 16;) {
+  for (let i = 0; i < buf.length && i < size;) {
     let n1 = buf[i++];
     if (n1 < 0x10) {
       let chunk = buf.subarray(i, i + n1);
@@ -56,5 +65,5 @@ export function decode(buf: Buffer) {
       throw new Error('incorrect data');
     }
   }
-  return stream.toBuffer();
+  return { ver, pal: palSize > 0 ? buf.subarray(size) : null, size, buffer: stream.toBuffer() };
 }
