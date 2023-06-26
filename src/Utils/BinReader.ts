@@ -185,16 +185,16 @@ export class BinReaderSync {
     return this.position >= this.#size;
   }
 
-  #fd: FileHandle;
+  #fd: number;
   #size: number;
   #position = 0;
   #buffer: Buffer = Buffer.alloc(16 * 1024);
   #bufferOffset = -1;
   #bufferSize = 0;
 
-  constructor(fd: FileHandle) {
+  constructor(fd: number) {
     this.#fd = fd;
-    let stats = fs.fstatSync(fd.fd);
+    let stats = fs.fstatSync(fd);
     this.#size = stats.size;
   }
 
@@ -203,7 +203,7 @@ export class BinReaderSync {
       return -1;
     }
     this.#position += this.#bufferSize;
-    let bytesRead = fs.readSync(this.#fd.fd, this.#buffer, 0, this.#buffer.length, this.#position);
+    let bytesRead = fs.readSync(this.#fd, this.#buffer, 0, this.#buffer.length, this.#position);
     this.#bufferOffset = 0;
     this.#bufferSize = bytesRead;
     return bytesRead;

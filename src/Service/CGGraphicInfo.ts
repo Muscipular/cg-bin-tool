@@ -1,8 +1,8 @@
-import {BinReaderSync} from "./utils/BinReader.ts";
+import {BinReaderSync} from "../Utils/BinReader.ts";
 import {FileHandle} from "fs/promises";
 import * as fs from "fs";
 
-export class CGGraphicInfo {
+export interface CGGraphicInfo {
   /*LONG	序號;	圖片的編號
 DWORD	地址;	指明圖片在數據文件中的起始位置
 DWORD	塊長度;	圖片數據塊的大小
@@ -15,28 +15,31 @@ BYTE	佔地面積-南;	同上
 BYTE	標誌;	用於地圖，0表示障礙物，1表示可以走上去
 BYTE[5]	未知;	在StoneAge中本字段長度為45字節
 LONG	地圖編號;	低16位表示在地圖文件裡的編號，高16位可能表示版本，非地圖單位的此項均為0*/
-  public SeqNo: number = 0;
-  public Offset: number = 0;
-  public Length: number = 0;
-  public OffsetX: number = 0;
-  public OffsetY: number = 0;
-  public Width: number = 0;
-  public Height: number = 0;
-  public SizeX: number = 0;
-  public SizeY: number = 0;
-  public Flag: number = 0;
+  SeqNo: number;
+  Offset: number;
+  Length: number;
+  OffsetX: number;
+  OffsetY: number;
+  Width: number;
+  Height: number;
+  SizeX: number;
+  SizeY: number;
+  Flag: number;
 
 // [field: MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
 //   public Padding: number = 0;
 //   public Padding2: number = 0;
-  public MapNo: number = 0;
+  MapNo: number;
+}
+
+export class CGGraphicInfoUtils {
 
   public static read(r: BinReaderSync) {
     if (r.eof || r.size - r.position < 40) {
       return null;
     }
     // r.read({length: 40})
-    let info = new CGGraphicInfo();
+    let info: CGGraphicInfo = {} as CGGraphicInfo;
 
     info.SeqNo = r.readInt32LE();
     info.Offset = r.readUInt32LE();

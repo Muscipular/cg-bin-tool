@@ -2,8 +2,8 @@ import {makeAutoObservable, runInAction} from "mobx";
 import * as fs from "fs";
 import {glob} from "glob";
 import * as Path from 'path';
-import {BinReaderSync} from "./utils/BinReader.ts";
 import {CGGraphicInfo} from "./CGGraphicInfo.ts";
+import Worker from "../Worker/Wrapper.ts";
 
 interface GraphicData {
   name: string,
@@ -11,8 +11,9 @@ interface GraphicData {
 }
 
 class BinService {
-  binList: GraphicData[] = [];
+  binList: string[] = [];
   animeList: string[] = [];
+  #map = new Map<string, CGGraphicInfo[]>();
 
   async loadBin(path: string) {
     // let files = await fs.promises.readdir(path);
@@ -21,27 +22,20 @@ class BinService {
     for (const file of files) {
       ret.push({ name: file.replace(/GraphicInfo/i, "Graphic"), infoList: await this.loadInfo(Path.join(path, file)) });
     }
+    for (const g of ret) {
+      this.#map.set(g.name, g.infoList!);
+    }
+    // console.log(ret);
     // console.log(files);
     runInAction(() => {
-      this.binList = ret;
+      this.binList = ret.map(e => e.name);
     })
   }
 
   async loadInfo(path: string) {
     console.log('load Info ' + path);
-    let fd = await fs.promises.open(path, 'r');
-    let binaryStream = new BinReaderSync(fd);
-    let info: CGGraphicInfo | null = null;
-    let ret: CGGraphicInfo[] = [];
-    try {
-      while (info = CGGraphicInfo.read(binaryStream)) {
-        // console.log(info);
-        ret.push(info);
-      }
-    } catch (e) {
-      console.error('load info error', e);
-    }
-    await fd.close();
+    let ret = await Worker.readGraphicInfo(path);
+    // console.log(ret.length, ret[0]);
     return ret;
   }
 

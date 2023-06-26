@@ -1,9 +1,9 @@
 import {} from 'react'
 import {Button, Classes, FormGroup, InputGroup, Label} from "@blueprintjs/core";
 import {observer,} from 'mobx-react-lite';
-import config from '../config'
+import config from '../Service/config.ts'
 import {ipcRenderer} from "electron";
-import binService from "../BinService.ts";
+import binService from "../Service/BinService.ts";
 
 ipcRenderer.on('open-dir', (e, {path, error}: { path: string, error: any }) => {
   config.path = path;

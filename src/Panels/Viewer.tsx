@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {Tab, Tabs} from "@blueprintjs/core";
-import binService from "../BinService.ts";
+import binService from "../Service/BinService.ts";
 
 
 export default () => {
@@ -10,7 +10,7 @@ export default () => {
     <div className={'bin-list'}>
       <Tabs id={'BinTabs'} vertical={true} fill={true}>
         {binService.binList.map(e =>
-          <Tab id={'BinTabs-' + e.name} title={e.name} key={e.name}></Tab>
+          <Tab id={'BinTabs-' + e} title={e} key={e}></Tab>
         )}
       </Tabs>
     </div>
