@@ -46,6 +46,10 @@ class BinService {
   constructor() {
     makeAutoObservable(this)
   }
+
+  getBinList(bin: string) {
+    return this.#map.get(bin);
+  }
 }
 
 let binService = new BinService();
