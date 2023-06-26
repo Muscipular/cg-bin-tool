@@ -1,6 +1,7 @@
 import {BinReaderSync} from "../Utils/BinReader.ts";
 import fs from "fs";
-import {CGGraphicInfo, CGGraphicInfoUtils} from "../Service/CGGraphicInfo.ts";
+import {CGGraphicInfo} from "../Service/CGGraphicInfo.ts";
+import {CGGraphicInfoUtils} from "../Service/CGGraphicInfoUtils.ts";
 
 export async function readGraphicInfo(channel: string, args: any[]) {
   // console.log(channel, ...args);

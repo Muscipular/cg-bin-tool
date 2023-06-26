@@ -4,6 +4,7 @@ import {glob} from "glob";
 import * as Path from 'path';
 import {CGGraphicInfo} from "./CGGraphicInfo.ts";
 import Worker from "../Worker/Wrapper.ts";
+import {CGPUtils} from "./CGGraphicInfoUtils.ts";
 
 interface GraphicData {
   name: string,
@@ -12,6 +13,8 @@ interface GraphicData {
 
 class BinService {
   binList: string[] = [];
+  cgpList: string[] = [];
+  #cgpMap = new Map<string, Buffer>();
   animeList: string[] = [];
   #map = new Map<string, CGGraphicInfo[]>();
 
@@ -27,11 +30,19 @@ class BinService {
     for (const g of ret) {
       this.#map.set(g.name, g.infoList!);
     }
+    let cgpList = await glob("bin/pal/*.cgp", { cwd: path, root: path, absolute: false, nodir: true })
+    for (const cgpFile of cgpList) {
+      let fd = fs.openSync(Path.join(path, cgpFile), 'r');
+      let buffer = CGPUtils.read(fd);
+      fs.closeSync(fd);
+      this.#cgpMap.set(cgpFile, buffer);
+    }
     let ts = performance.now() - now;
     console.log('done in ' + ts + 'ms');
     // console.log(ret);
     // console.log(files);
     runInAction(() => {
+      this.cgpList = cgpList;
       this.binList = ret.map(e => e.name);
     })
   }
@@ -47,8 +58,12 @@ class BinService {
     makeAutoObservable(this)
   }
 
-  getBinList(bin: string) {
+  getGraphicList(bin: string) {
     return this.#map.get(bin);
+  }
+
+  getCPG(cgp: string) {
+    return this.#cgpMap.get(cgp);
   }
 }
 

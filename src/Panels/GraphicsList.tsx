@@ -6,7 +6,7 @@ import {CGGraphicInfo} from "../Service/CGGraphicInfo.ts";
 export default function GraphicsList(props: { bin: string, onSelect?: (s: CGGraphicInfo) => void }) {
   const { bin } = props;
   // console.log(bin);
-  let binList = useMemo(() => binService.getBinList(bin) || [], [bin]);
+  let binList = useMemo(() => binService.getGraphicList(bin) || [], [bin]);
 
   const scrollElRef = useRef<HTMLDivElement>(null);
   let virtualList = useVirtual({

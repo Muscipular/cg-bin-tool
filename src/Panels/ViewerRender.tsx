@@ -3,6 +3,8 @@ import {useContext, useEffect, useRef} from "react";
 import fs from "fs";
 import config from "../Service/Config.ts";
 import * as Path from "path";
+import {decode} from "../Utils/BinDecoder.ts";
+import binService from "../Service/BinService.ts";
 
 export function ViewerRender({ info, bin }: { info: CGGraphicInfo, bin: string }) {
   let ref = useRef<HTMLCanvasElement>(null);
@@ -10,12 +12,30 @@ export function ViewerRender({ info, bin }: { info: CGGraphicInfo, bin: string }
     let fd = fs.openSync(Path.join(config.path, bin), 'r');
     let buffer = Buffer.alloc(info.Length);
     fs.readSync(fd, buffer, 0, info.Length, info.Offset);
-    console.log(buffer);
+    try {
+      buffer = decode(buffer);
+    } catch (e) {
+      console.log(e, buffer.subarray(0, 16).toString('hex'));
+      return;
+    }
+    // console.log(buffer.subarray(0, 16));
     fs.closeSync(fd);
-
+    let context = ref.current?.getContext('2d');
+    if (context) {
+      context.clearRect(0, 0, 640, 480)
+      let data = context.createImageData(info.Width, info.Height);
+      let cpg = binService.getCPG("bin\\pal\\palet_07.cgp");
+      for (let i = 0; i < buffer.length; i++) {
+        let n = buffer.readUInt8(i);
+        for (let j = 0; j < 4; j++) {
+          data.data[i * 4 + j] = cpg![n * 4];
+        }
+      }
+      context.putImageData(data, 0, 0);
+    }
   }, [info, config.path, bin])
   return <canvas className={'viewer-canvas'} ref={ref}
-                 width={Math.min(info.Width, 640)}
-                 height={Math.min(info.Height, 480)}
+                 width={640}
+                 height={480}
   ></canvas>;
 }
