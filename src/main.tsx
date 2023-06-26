@@ -5,13 +5,18 @@ import './index.scss'
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <React.StrictMode>
-        <App/>
-    </React.StrictMode>,
+  <React.StrictMode>
+    <App/>
+  </React.StrictMode>,
 )
 
 import {ipcRenderer} from "electron"
 
 ipcRenderer.on('open-dir', (_e, s: string) => {
-    console.log('open-dir', s);
+  console.log('open-dir', s);
 })
+
+
+window.onbeforeunload = function () {
+  ipcRenderer.removeAllListeners("open-dir");
+}
