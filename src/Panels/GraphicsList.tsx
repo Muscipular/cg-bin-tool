@@ -10,10 +10,10 @@ export default function GraphicsList(props: { bin: string, onSelect?: (s: CGGrap
 
   const scrollElRef = useRef<HTMLDivElement>(null);
   let virtualList = useVirtual({
-    estimateSize: useCallback(() => 26, [bin]),
+    estimateSize: useCallback(() => 26, []),
     overscan: 10,
     size: binList.length,
-    keyExtractor: index => binList[index].SeqNo + binList[index].Offset,
+    keyExtractor: useCallback((index: number) => index + binList[index].Offset, [binList]),
     parentRef: scrollElRef,
     // paddingStart: 1,
     // scrollToFn: scrollToFn,

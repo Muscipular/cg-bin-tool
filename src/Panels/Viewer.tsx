@@ -1,9 +1,10 @@
-import {useState} from 'react'
+import React, {useState} from 'react'
 import {Tab, Tabs} from "@blueprintjs/core";
 import binService from "../Service/BinService.ts";
 import GraphicsList from "./GraphicsList.tsx";
 import {observer} from "mobx-react-lite";
 import {CGGraphicInfo} from "../Service/CGGraphicInfo.ts";
+import {ViewerRender} from "./ViewerRender.tsx";
 
 
 let Viewer = () => {
@@ -28,6 +29,7 @@ let Viewer = () => {
       </div>
       <div> 标记: {g?.Flag} 大小:{g?.Length}@{g?.Offset}
       </div>
+      {currentBin && g && <ViewerRender bin={currentBin} info={g}/>}
     </div>
   </div>
 };
