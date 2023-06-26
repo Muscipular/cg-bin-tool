@@ -13,7 +13,7 @@ export class WorkerWrapper {
   #map = new Map<bigint, Defer>();
 
   constructor() {
-    this.#worker = [new BackgroundWorker(), new BackgroundWorker(), new BackgroundWorker()];
+    this.#worker = [new BackgroundWorker(), new BackgroundWorker(), new BackgroundWorker(), new BackgroundWorker()];
     for (const w of this.#worker) {
       w.addEventListener('message', (e: MessageEvent<{ channel: string, id: bigint, resp: any, error: string }>) => {
         const { channel, id, resp, error } = e.data;

@@ -19,12 +19,16 @@ class BinService {
     // let files = await fs.promises.readdir(path);
     let files = await glob("bin/**/GraphicInfo*.bin", { cwd: path, root: path, absolute: false, nodir: true })
     let ret: GraphicData[] = [];
+    let now = performance.now();
     for (const file of files) {
-      ret.push({ name: file.replace(/GraphicInfo/i, "Graphic"), infoList: await this.loadInfo(Path.join(path, file)) });
+      ret.push({ name: file.replace(/GraphicInfo/i, "Graphic") });
     }
+    ret = await Promise.all(files.map(file => this.loadInfo(Path.join(path, file)).then(e => ({ name: file.replace(/GraphicInfo/i, "Graphic"), infoList: e }))));
     for (const g of ret) {
       this.#map.set(g.name, g.infoList!);
     }
+    let ts = performance.now() - now;
+    console.log('done in ' + ts + 'ms');
     // console.log(ret);
     // console.log(files);
     runInAction(() => {
