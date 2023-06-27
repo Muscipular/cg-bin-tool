@@ -1,3 +1,8 @@
+export enum CGType {
+  Graphic,
+  Anime
+}
+
 export interface CGGraphicInfo {
   /*LONG	序號;	圖片的編號
 DWORD	地址;	指明圖片在數據文件中的起始位置
@@ -26,5 +31,13 @@ LONG	地圖編號;	低16位表示在地圖文件裡的編號，高16位可能表
   Padding: number;
   Padding2: number;
   MapNo: number;
+  Type: CGType;
 }
 
+export interface CGAnimeInfo {
+  AnimateNo: number;
+  Offset: number;
+  Count: number;
+  Padding: number;
+  Type: CGType;
+}

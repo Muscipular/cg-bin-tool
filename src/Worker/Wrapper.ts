@@ -1,5 +1,5 @@
 import BackgroundWorker from "./BackgroundWorker.ts?worker"
-import {CGGraphicInfo} from "../Service/CGGraphicInfo.ts";
+import {CGAnimeInfo, CGGraphicInfo} from "../Service/CGGraphicInfo.ts";
 
 interface Defer {
   resolve(o?: any): void;
@@ -63,6 +63,10 @@ export class WorkerWrapper {
 
   readGraphicInfo(path: string) {
     return this.#run<CGGraphicInfo[]>('readGraphicInfo', path);
+  }
+
+  readAnimeInfo(path: string) {
+    return this.#run<CGAnimeInfo[]>('readAnimeInfo', path);
   }
 }
 

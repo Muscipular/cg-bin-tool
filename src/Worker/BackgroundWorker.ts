@@ -1,8 +1,9 @@
-import {readGraphicInfo} from "./BinInfoReader.ts";
+import {readAnimeInfo, readGraphicInfo} from "./BinInfoReader.ts";
 
 const fun = new Map<string, (s: string, args: any[]) => Promise<any>>();
 
 fun.set('readGraphicInfo', readGraphicInfo);
+fun.set('readAnimeInfo', readAnimeInfo);
 
 global.addEventListener('message', async (e: MessageEvent<{ channel: string, id: bigint, args: any[] }>) => {
   const { channel, id, args } = e.data;

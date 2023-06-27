@@ -1,7 +1,7 @@
 import {BinReaderSync} from "../Utils/BinReader.ts";
 import {FileHandle} from "fs/promises";
 import fs from "fs";
-import {CGGraphicInfo} from "./CGGraphicInfo.ts";
+import {CGGraphicInfo, CGType} from "./CGGraphicInfo.ts";
 
 export class CGGraphicInfoUtils {
   public static read(r: BinReaderSync) {
@@ -9,7 +9,7 @@ export class CGGraphicInfoUtils {
       return null;
     }
     // r.read({length: 40})
-    let info: CGGraphicInfo = {} as CGGraphicInfo;
+    let info: CGGraphicInfo = { Type: CGType.Graphic } as CGGraphicInfo;
 
     info.SeqNo = r.readInt32LE();
     info.Offset = r.readUInt32LE();

@@ -2,7 +2,7 @@ import {makeAutoObservable, runInAction} from "mobx";
 import * as fs from "fs";
 import {glob} from "glob";
 import * as Path from 'path';
-import {CGGraphicInfo} from "./CGGraphicInfo.ts";
+import {CGAnimeInfo, CGGraphicInfo} from "./CGGraphicInfo.ts";
 import Worker from "../Worker/Wrapper.ts";
 
 import {CGPUtils} from "./CGPUtils.ts";
@@ -12,24 +12,41 @@ interface GraphicData {
   infoList?: CGGraphicInfo[]
 }
 
+interface AnimeData {
+  name: string,
+  infoList?: CGAnimeInfo[]
+}
+
 class BinService {
   binList: string[] = [];
   cgpList: string[] = [];
   #cgpMap = new Map<string, Buffer>();
   animeList: string[] = [];
-  #map = new Map<string, CGGraphicInfo[]>();
+  #binMap = new Map<string, CGGraphicInfo[]>();
+  #animeMap = new Map<string, CGAnimeInfo[]>();
 
   async loadBin(path: string) {
     // let files = await fs.promises.readdir(path);
+    let now = performance.now();
     let files = await glob("bin/**/GraphicInfo*.bin", { cwd: path, root: path, absolute: false, nodir: true })
     let ret: GraphicData[] = [];
-    let now = performance.now();
     for (const file of files) {
       ret.push({ name: file.replace(/GraphicInfo/i, "Graphic") });
     }
-    ret = await Promise.all(files.map(file => this.loadInfo(Path.join(path, file)).then(e => ({ name: file.replace(/GraphicInfo/i, "Graphic"), infoList: e }))));
+    let anfiles = await glob("bin/**/AnimeInfo*.bin", { cwd: path, root: path, absolute: false, nodir: true })
+    let anret: AnimeData[] = [];
+    for (const file of files) {
+      anret.push({ name: file.replace(/AnimeInfo/i, "Anime") });
+    }
+    [ret, anret] = await Promise.all([
+      Promise.all(files.map(file => this.loadGraphicInfo(Path.join(path, file)).then(e => ({ name: file.replace(/GraphicInfo/i, "Graphic"), infoList: e })))),
+      Promise.all(anfiles.map(file => this.loadAnimeInfo(Path.join(path, file)).then(e => ({ name: file.replace(/AnimeInfo/i, "Anime"), infoList: e }))))
+    ]);
     for (const g of ret) {
-      this.#map.set(g.name, g.infoList!);
+      this.#binMap.set(g.name, g.infoList!);
+    }
+    for (const g of anret) {
+      this.#animeMap.set(g.name, g.infoList!);
     }
     let cgpList = await glob("bin/pal/*.cgp", { cwd: path, root: path, absolute: false, nodir: true });
     cgpList.sort();
@@ -46,12 +63,20 @@ class BinService {
     runInAction(() => {
       this.cgpList = cgpList;
       this.binList = ret.map(e => e.name);
+      this.animeList = anret.map(e => e.name);
     })
   }
 
-  async loadInfo(path: string) {
+  async loadGraphicInfo(path: string) {
     console.log('load Info ' + path);
     let ret = await Worker.readGraphicInfo(path);
+    // console.log(ret.length, ret[0]);
+    return ret;
+  }
+
+  async loadAnimeInfo(path: string) {
+    console.log('load Info ' + path);
+    let ret = await Worker.readAnimeInfo(path);
     // console.log(ret.length, ret[0]);
     return ret;
   }
@@ -61,7 +86,11 @@ class BinService {
   }
 
   getGraphicList(bin: string) {
-    return this.#map.get(bin);
+    return this.#binMap.get(bin);
+  }
+
+  getAnimeList(bin: string) {
+    return this.#animeMap.get(bin);
   }
 
   getCPG(cgp: string) {

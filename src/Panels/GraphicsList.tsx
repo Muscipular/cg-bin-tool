@@ -1,7 +1,7 @@
-import {useVirtual, VirtualItem} from 'react-virtual';
+import {useVirtual} from 'react-virtual';
 import binService from "../Service/BinService.ts";
 import {useCallback, useMemo, useRef, useState} from "react";
-import {CGGraphicInfo} from "../Service/CGGraphicInfo.ts";
+import {CGAnimeInfo, CGGraphicInfo, CGType} from "../Service/CGGraphicInfo.ts";
 import {InputGroup} from "@blueprintjs/core";
 
 let cacheReg: RegExp | null = null;
@@ -28,12 +28,24 @@ function match(s: string, p: string) {
   }
 }
 
-export default function GraphicsList(props: { bin: string, onSelect?: (s: CGGraphicInfo) => void }) {
+function renderItem(o: CGAnimeInfo | CGGraphicInfo) {
+  if (o.Type == CGType.Graphic) {
+    let e = o as CGGraphicInfo;
+    return `#${e.SeqNo}/${e.MapNo}`
+  }
+  if (o.Type == CGType.Anime) {
+    let e = o as CGAnimeInfo;
+    return `#${e.AnimateNo}`
+  }
+  return ''
+}
+
+export default function GraphicsList(props: { bin: string, onSelect?: (s: CGGraphicInfo | CGAnimeInfo) => void }) {
   const { bin } = props;
   // console.log(bin);
-  let binList = useMemo(() => binService.getGraphicList(bin) || [], [bin]);
+  let binList: (CGGraphicInfo | CGAnimeInfo)[] = useMemo(() => binService.getGraphicList(bin) || binService.getAnimeList(bin) || [], [bin]);
   let [filter, setFilter] = useState('');
-  let infos = useMemo(() => filter ? binList.filter(e => match(`#${e.SeqNo}/${e.MapNo}`, filter)) : binList, [filter, binList]);
+  let infos = useMemo(() => filter ? binList.filter((e: CGGraphicInfo | CGAnimeInfo) => match(renderItem(e), filter)) : binList, [filter, binList]);
   const scrollElRef = useRef<HTMLDivElement>(null);
   let virtualList = useVirtual({
     estimateSize: useCallback(() => 26, []),
@@ -55,7 +67,7 @@ export default function GraphicsList(props: { bin: string, onSelect?: (s: CGGrap
         position: "relative",
         // minHeight: 'calc(100% + 1px)',
       }}>
-        {virtualList.virtualItems.map(e => <div key={e.key} className={(selected === e.index ? 'selected' : '')+' g-item'} style={{
+        {virtualList.virtualItems.map(e => <div key={e.key} className={(selected === e.index ? 'selected' : '') + ' g-item'} style={{
           position: 'absolute',
           top: 0,
           left: 0,
@@ -66,7 +78,7 @@ export default function GraphicsList(props: { bin: string, onSelect?: (s: CGGrap
           setSelected(e.index);
           props.onSelect?.(infos[e.index])
         }}>
-          #{infos[e.index].SeqNo}/{infos[e.index].MapNo}
+          {renderItem(infos[e.index])}
         </div>)}
       </div>
     </div>
