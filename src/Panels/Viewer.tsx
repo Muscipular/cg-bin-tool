@@ -6,15 +6,14 @@ import {observer} from "mobx-react-lite";
 import {CGGraphicInfo} from "../Service/CGGraphicInfo.ts";
 import {ViewerRender} from "./ViewerRender.tsx";
 
-
 let Viewer = () => {
   // let [list, setList] = useState([]);
   let [currentBin, setCurrentBin] = useState(binService.binList[0]);
   let [g, setG] = useState<CGGraphicInfo | null>(null);
-  let [cgp, setCGP] = useState<string | null>(null);
+  let [cgp, setCGP] = useState<string | null>(binService.cgpList?.[0]);
 
   return <div className={'main-container'}>
-    <div className={'bin-list'}>
+    <div className={'bin-list list-scroller'}>
       <Tabs id={'BinTabs'} vertical={true} fill={true} selectedTabId={currentBin} onChange={e => setCurrentBin(e.toString())}>
         {binService.binList.map(e =>
           <Tab id={e} title={e} key={e}></Tab>

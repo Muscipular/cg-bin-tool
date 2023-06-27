@@ -58,7 +58,7 @@ export function ViewerRender({ info, bin, cgp }: { info: CGGraphicInfo, bin: str
     }
   }, [info, config.path, bin, cgp])
   return <canvas className={'viewer-canvas'} ref={ref}
-                 width={640}
-                 height={480}
+                 width={info.Width}
+                 height={info.Height}
   ></canvas>;
 }

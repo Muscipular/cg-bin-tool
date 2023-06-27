@@ -28,9 +28,9 @@ function createWindow() {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
     },
-    frame: false,
-    // titleBarOverlay: true,
-    // titleBarStyle: 'default'
+    // frame: false,
+    titleBarOverlay: true,
+    titleBarStyle: 'hidden'
     // thickFrame: true,
   })
 

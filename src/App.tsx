@@ -24,9 +24,9 @@ function App() {
             <Tab id="settings" icon={"settings"} title="设置"/>
           </Tabs>
         </Navbar.Group>
-        <Navbar.Group align={Alignment.RIGHT}>
-          <input className="bp5-input" type="text" placeholder="Search..."/>
-        </Navbar.Group>
+        {/*<Navbar.Group align={Alignment.RIGHT}>*/}
+        {/*  <input className="bp5-input" type="text" placeholder="Search..."/>*/}
+        {/*</Navbar.Group>*/}
       </Navbar>
       {tabId == 'viewer' && <Viewer/>}
       {tabId == 'tools' && <Tools/>}

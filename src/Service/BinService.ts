@@ -31,7 +31,8 @@ class BinService {
     for (const g of ret) {
       this.#map.set(g.name, g.infoList!);
     }
-    let cgpList = await glob("bin/pal/*.cgp", { cwd: path, root: path, absolute: false, nodir: true })
+    let cgpList = await glob("bin/pal/*.cgp", { cwd: path, root: path, absolute: false, nodir: true });
+    cgpList.sort();
     for (const cgpFile of cgpList) {
       let fd = fs.openSync(Path.join(path, cgpFile), 'r');
       let buffer = CGPUtils.read(fd);
