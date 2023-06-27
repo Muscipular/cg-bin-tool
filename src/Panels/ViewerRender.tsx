@@ -5,7 +5,8 @@ import config from "../Service/Config.ts";
 import * as Path from "path";
 import {decode} from "../Utils/BinDecoder.ts";
 import binService from "../Service/BinService.ts";
-import {CGPUtils} from "../Service/CGGraphicInfoUtils.ts";
+
+import {CGPUtils} from "../Service/CGPUtils.ts";
 
 export function ViewerRender({ info, bin, cgp }: { info: CGGraphicInfo, bin: string, cgp: string }) {
   let ref = useRef<HTMLCanvasElement>(null);
@@ -13,17 +14,19 @@ export function ViewerRender({ info, bin, cgp }: { info: CGGraphicInfo, bin: str
     let fd = fs.openSync(Path.join(config.path, bin), 'r');
     let buffer = Buffer.alloc(info.Length);
     let ver = 0;
-    let pal: Buffer | null = null;
+    let palSize = 0;
     let size = 0;
+    let pad = 0;
     fs.readSync(fd, buffer, 0, info.Length, info.Offset);
     try {
       let res = decode(buffer);
       ver = res.ver;
       buffer = res.buffer;
-      pal = res.pal;
+      palSize = res.palSize;
       size = res.size;
+      pad = res.pad;
     } catch (e) {
-      console.log(e, buffer.subarray(0, 16).toString('hex'));
+      console.error(e, info, buffer.subarray(0, 16).toString('hex'));
       return;
     }
     // console.log(buffer.subarray(0, 16));
@@ -33,10 +36,10 @@ export function ViewerRender({ info, bin, cgp }: { info: CGGraphicInfo, bin: str
       context.clearRect(0, 0, 640, 480);
       let data = context.createImageData(info.Width, info.Height);
       let cpg = binService.getCPG(cgp);
-      console.log(pal?.length, size, ver, buffer.length)
-      if (pal && pal.length > 0) {
-        cpg = CGPUtils.convert(pal, cpg!);
-        // buffer = buffer.subarray(0, size);
+      console.log(palSize, size, ver, buffer.length, pad.toString(2))
+      if (palSize > 0) {
+        cpg = CGPUtils.convert(buffer.subarray(size, size + palSize), cpg!);
+        buffer = buffer.subarray(0, size);
       }
       for (let y = 0; y < info.Height; y++) {
         for (let x = 0; x < info.Width; x++) {

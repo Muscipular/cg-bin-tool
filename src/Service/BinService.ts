@@ -4,7 +4,8 @@ import {glob} from "glob";
 import * as Path from 'path';
 import {CGGraphicInfo} from "./CGGraphicInfo.ts";
 import Worker from "../Worker/Wrapper.ts";
-import {CGPUtils} from "./CGGraphicInfoUtils.ts";
+
+import {CGPUtils} from "./CGPUtils.ts";
 
 interface GraphicData {
   name: string,
