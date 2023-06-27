@@ -24,11 +24,12 @@ let Viewer = () => {
       {currentBin && <GraphicsList bin={currentBin} onSelect={e => setG(e)}></GraphicsList>}
     </div>
     <div className={'img-viewer'}>
-      <div>
-        占位: {g?.SizeX}X{g?.SizeY} 宽高: {g?.Width}x{g?.Height} 偏移:{g?.OffsetX}x{g?.OffsetY}
+      <div>占位: {g?.SizeX}X{g?.SizeY} 宽高: {g?.Width}x{g?.Height} 偏移: {g?.OffsetX}x{g?.OffsetY}
       </div>
-      <div> 标记: {g?.Flag} 大小:{g?.Length}@{g?.Offset}
-        <HTMLSelect value={cgp!} options={binService.cgpList} onChange={(e) => {
+      <div>标记: {g?.Flag} 大小:{g?.Length}@{g?.Offset}
+      </div>
+      <div>
+        调色板: <HTMLSelect value={cgp!} options={binService.cgpList} onChange={(e) => {
           setCGP(e.currentTarget.value);
         }}></HTMLSelect>
       </div>
